@@ -1,0 +1,112 @@
+* {
+  margin: 0;
+  padding: 0;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+  font-family: "Poppins", sans-serif;
+}
+
+body {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  min-height: 100vh;
+  background: linear-gradient(135deg, rgb(255, 204, 163), rgb(224, 102, 15));
+}
+
+.wrapper {
+  width: 450px;
+  background: hsl(0, 0%, 100%);
+  border-radius: 10px;
+}
+.wrapper header {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  padding: 25px 30px 10px;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
+}
+.wrapper .current-date {
+  font-size: 1.45rem;
+  font-weight: 500;
+}
+.wrapper .icons span {
+  font-size: 1.9rem;
+  height: 38px;
+  width: 38px;
+  margin: 0 1px;
+  text-align: center;
+  line-height: 38px;
+  border-radius: 50%;
+  color: #878787;
+  cursor: pointer;
+}
+.wrapper .icons span:hover {
+  background: #f2f2f2;
+}
+.wrapper .icons span:last-child {
+  margin-right: -10px;
+}
+
+.calendar {
+  padding: 20px;
+}
+.calendar ul {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  list-style: none;
+  -ms-flex-wrap: wrap;
+      flex-wrap: wrap;
+  text-align: center;
+}
+.calendar ul li {
+  position: relative;
+  width: 14.2857142857%;
+}
+.calendar .weeks li {
+  font-weight: 600;
+}
+.calendar .days {
+  margin-bottom: 20px;
+}
+.calendar .days li {
+  z-index: 1;
+  cursor: pointer;
+  margin-top: 30px;
+}
+.calendar .days li:hover::before {
+  background: #f2f2f2;
+}
+.calendar .days li:before {
+  position: absolute;
+  content: "";
+  height: 40px;
+  width: 40px;
+  top: 48%;
+  left: 50%;
+  -webkit-transform: translate(-50%, -50%);
+          transform: translate(-50%, -50%);
+  border-radius: 50%;
+  z-index: -1;
+}
+.calendar .days li.inactive {
+  color: #aaa;
+}
+.calendar .days li.active {
+  color: #fff;
+}
+.calendar .days li.active:before {
+  background: rgb(224, 102, 15);
+}

@@ -1,0 +1,124 @@
+// @import "../node_modules/bootstrap/scss/functions";
+// @import "../node_modules/bootstrap/scss/variables";
+// @import "../node_modules/bootstrap/scss/mixins";
+// @import "../node_modules/bootstrap/scss/bootstrap.scss";
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+
+body {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    background: linear-gradient(135deg, rgba(255, 204, 163, 1.0), rgba(224, 102, 15, 1.0));
+}
+
+.wrapper {
+    width: 450px;
+    background: hsl(0, 0%, 100%);
+    border-radius: 10px;
+
+    header {
+        display: flex;
+        align-items: center;
+        padding: 25px 30px 10px;
+        justify-content: space-between;
+    }
+
+    .current-date {
+        font-size: 1.45rem;
+        font-weight: 500;
+    }
+
+
+    .icons {
+        span {
+            font-size: 1.9rem;
+            height: 38px;
+            width: 38px;
+            margin: 0 1px;
+            text-align: center;
+            line-height: 38px;
+            border-radius: 50%;
+            color: #878787;
+            cursor: pointer;
+
+            &:hover {
+                background: #f2f2f2;
+            }
+
+            &:last-child {
+                margin-right: -10px;
+            }
+        }
+
+
+    }
+}
+
+
+.calendar {
+    padding: 20px;
+
+    ul {
+        display: flex;
+        list-style: none;
+        flex-wrap: wrap;
+        text-align: center;
+
+        li {
+            position: relative;
+            width: calc(100% / 7);
+        }
+    }
+
+
+    .weeks {
+        li {
+            font-weight: 600;
+        }
+    }
+
+    .days {
+        margin-bottom: 20px;
+
+        li {
+            z-index: 1;
+            cursor: pointer;
+            margin-top: 30px;
+
+            &:hover::before {
+                background: #f2f2f2;
+            }
+
+            &:before {
+                position: absolute;
+                content: "";
+                height: 40px;
+                width: 40px;
+                top: 48%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                border-radius: 50%;
+                z-index: -1;
+            }
+        }
+
+        li.inactive {
+            color: #aaa;
+        }
+
+        li.active {
+            color: #fff;
+
+            &:before {
+                background: rgba(224, 102, 15, 1.0);
+            }
+        }
+    }
+}
