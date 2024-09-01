@@ -14,9 +14,11 @@
 <body>
     <div class="wrapper">
         <header>
-            <p class="current-date"></p>
+            <!-- <p id="month-picker" class="current-date"></p> -->
+            <p id="month-picker" class="month-picker"></p>
+            <p id="year-picker" class="year-picker"></p>
             <div class="icons">
-                <span class="material-symbols-outlined">today</span>
+                <span id="today" class="material-symbols-outlined">today</span>
                 <span id="prev" class="material-symbols-outlined">chevron_left</span>
                 <span id="next" class="material-symbols-outlined">chevron_right</span>
             </div>
@@ -25,8 +27,15 @@
             <ul class="weeks"></ul>
             <ul class="days"></ul>
         </div>
+        <div class="month-list"></div>
+        <!-- <div class="year-list"></div> -->
+        <label class="switch">
+            <span class="lang"></span>
+            <input type="checkbox">
+            <span class="slider round"></span>
+        </label>
     </div>
-    <div class="custom-calendar" data-lang="en-us"></div>
+    <!-- <div class="custom-calendar" data-lang="en-us"></div> -->
 </body>
 
 </html>

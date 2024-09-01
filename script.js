@@ -1,16 +1,27 @@
-const currentDate = document.querySelector(".current-date");
+// const currentDate = document.querySelector(".current-date");
+const monthPicker = document.querySelector(".month-picker");
+const yearPicker = document.querySelector(".year-picker");
 const daysTag = document.querySelector(".days");
 const weeksTag = document.querySelector(".weeks");
-let prevNextIcon = document.querySelectorAll(".icons span");
+const todayBtn = document.querySelector("#today");
+let lang = document.querySelector(".lang")
+let prevBtn = document.querySelector("#prev");
+let nextBtn = document.querySelector("#next");
+let calendar = document.querySelector(".wrapper");
+let month_picker = document.querySelector("#month-picker")
+
 // getting new date, current year and month
 let date = new Date()
 let currentYear = date.getFullYear()
 let currentMonth = date.getMonth();
 
-const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November","December"];
-
-const weeks = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-
+const en_months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November","December"];
+const hindi_months = ["जनवरी","फरवरी","मार्च","अप्रैल","मई","जून","जुलाई","अगस्त","सितंबर","अक्टूबर","नवंबर","दिसंबर"]
+const en_weeks = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+const hindi_weeks =["रवि","सोम","मंगल","बुध","गुरु","शुक्र","शनि"];
+let months = [...en_months];
+let weeks = [...en_weeks];
+let language = "हिन्दी";
 // console.log(date, currentYear, currentMonth);
 
 const renderCalendar = ()   => {
@@ -20,6 +31,8 @@ const renderCalendar = ()   => {
     let lastDateOfLastMonth = new Date(currentYear, currentMonth,0).getDate();
     let daysLiTag = "";
     let weeksLiTag = "";
+
+
     for(let index = 0; index < weeks.length; index++) {
         weeksLiTag += `<li>${weeks[index]}</li>`;
     }
@@ -56,30 +69,114 @@ const renderCalendar = ()   => {
     }
 
 
-    currentDate.innerText = `${months[currentMonth]} ${currentYear}`;
+    monthPicker.innerText = `${months[currentMonth]}`;
+    yearPicker.innerText = `${currentYear}`;
     daysTag.innerHTML = daysLiTag;
     weeksTag.innerHTML = weeksLiTag;
+    lang.innerHTML =  language;
+
+    hideTodayBtn();
+    monthPickerList();
     
 }
 
 renderCalendar();
 
-prevNextIcon.forEach(icon =>{
-    icon.addEventListener('click',()=>{
-        if(icon.id === "prev"){ currentMonth = currentMonth - 1}
-        else if(icon.id === "next"){currentMonth = currentMonth + 1}
-        else{}
 
-        // updating month and year if user go to  calendar next year or previous year
-        if(currentMonth < 0 || currentMonth > 11){
-            date = new Date(currentYear, currentMonth);
-            currentYear = date.getFullYear(); 
-            currentMonth = date.getMonth();
-        }
-        else{
-            date = new Date();
-        }
-
-        renderCalendar();
-    })
+prevBtn.addEventListener('click', () => {
+    currentMonth = currentMonth - 1;
+    if(currentMonth < 0){
+        date = new Date(currentYear, currentMonth);
+        currentYear = date.getFullYear();
+        currentMonth = date.getMonth();
+    }
+    else{
+        date = new Date();
+    }
+    renderCalendar();
 })
+nextBtn.addEventListener('click', () => {
+    currentMonth = currentMonth + 1;
+    if(currentMonth > 11){
+        date = new Date(currentYear, currentMonth);
+        currentYear = date.getFullYear();
+        currentMonth = date.getMonth();
+    }
+    else{
+        date = new Date();
+    }
+    renderCalendar();
+})
+
+todayBtn.addEventListener("click", () => {
+    let date = new Date();
+    currentMonth = date.getMonth();
+    currentYear = date.getFullYear();
+    renderCalendar();
+  });
+
+
+function hideTodayBtn() {
+    if(currentMonth === new Date().getMonth() && currentYear === new Date().getFullYear()){
+        todayBtn.style.visibility = "hidden";
+    }
+    else{
+        todayBtn.style.visibility = "visible";
+    }
+}
+
+function monthPickerList() {
+    month_picker.onclick = () => {
+        // Get the month list div
+        let month_list = calendar.querySelector(".month-list");
+
+        // Clear the month list to avoid appending months again
+        month_list.innerHTML = '';
+
+        // Add the 'show' class to display the month list
+        month_list.classList.add('show');
+
+        // Loop through the months and create div elements
+        months.forEach((e, index) => {
+            let month_item = document.createElement('div');
+            month_item.innerHTML = `<div>${e}</div>`;
+
+            // Set onclick event for each month
+            month_item.onclick = () => {
+                // Hide the month list after selection
+                month_list.classList.remove('show');
+
+                // Set the current month
+                currentMonth = index;
+
+                // Render the calendar for the selected month
+                renderCalendar();
+            };
+
+            // Append the month item to the month list
+            month_list.appendChild(month_item);
+        });
+    };
+}
+
+
+// toggle switch
+document.addEventListener('DOMContentLoaded', function () {
+    let checkbox = document.querySelector('input[type="checkbox"]');
+  
+    checkbox.addEventListener('change', function () {
+      if (checkbox.checked) {
+          months = [...hindi_months]
+          weeks = [...hindi_weeks]
+          lang.innerHTML = '';
+          language = "eng"
+          renderCalendar();
+        } else {
+            months = [...en_months]
+            weeks = [...en_weeks]
+            lang.innerHTML = '';
+            language = "हिन्दी";
+        renderCalendar();
+      }
+    });
+  });
