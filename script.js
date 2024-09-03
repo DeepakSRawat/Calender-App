@@ -9,6 +9,7 @@ let prevBtn = document.querySelector("#prev");
 let nextBtn = document.querySelector("#next");
 let calendar = document.querySelector(".wrapper");
 let month_picker = document.querySelector("#month-picker")
+let year_picker = document.querySelector("#year-picker")
 
 // getting new date, current year and month
 let date = new Date()
@@ -77,6 +78,7 @@ const renderCalendar = ()   => {
 
     hideTodayBtn();
     monthPickerList();
+    YearPickerList();
     
 }
 
@@ -159,6 +161,50 @@ function monthPickerList() {
     };
 }
 
+// function to render the calendar by year
+function YearPickerList(){
+    year_picker.onclick = () =>{
+    let yearInput = document.querySelector('.year-input');
+    yearInput.innerHTML = '';
+    yearInput.classList.add('show');
+    let year_item = document.createElement('div');
+    year_item.innerHTML = `<div class="goto">
+              <input type="number" maxlength = "4" placeholder="yyyy" class="date-input" />
+              <button class="goto-btn">Go</button>
+            </div>`;
+    yearInput.appendChild(year_item);
+    let dateInput = document.querySelector(".date-input");
+    let gotoBtn = document.querySelector(".goto-btn");
+    let renderYear
+    let isValid
+    // Regular expression to check if the input is a four-digit number
+    dateInput.addEventListener("input",(e) => {
+
+            renderYear = dateInput.value;
+            isValid = /^[0-9]{4}$/.test(renderYear);
+    })
+
+    gotoBtn.addEventListener("click",gotoDate);
+    
+    function gotoDate(){
+        console.log(renderYear)
+        if(renderYear == undefined){
+            alert("Invalid Year")}
+        else if(!isValid){
+            alert("Invalid Year")
+            preventDefault();
+        }
+        else{
+            yearInput.classList.remove('show')
+            currentYear = renderYear;
+            renderCalendar();
+        }
+        return;
+
+    }
+}
+}
+
 
 // toggle switch
 document.addEventListener('DOMContentLoaded', function () {
@@ -179,4 +225,4 @@ document.addEventListener('DOMContentLoaded', function () {
         renderCalendar();
       }
     });
-  });
+  })

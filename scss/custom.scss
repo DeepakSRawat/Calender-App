@@ -1,3 +1,15 @@
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+    -moz-appearance: textfield;
+}
+
 * {
     margin: 0;
     padding: 0;
@@ -128,7 +140,8 @@ body {
     }
 }
 
-.month-list {
+.month-list,
+.year-input {
     position: absolute;
     width: 100%;
     height: 100%;
@@ -146,19 +159,22 @@ body {
     z-index: 1;
 }
 
-.month-list.show {
+.month-list.show,
+.year-input.show {
     transform: scale(1);
     visibility: visible;
     pointer-events: visible;
     transition: all 0.2s ease-in-out;
 }
 
-.month-list>div {
+.month-list>div,
+.year-input>div {
     display: grid;
     place-items: center;
 }
 
-.month-list>div>div {
+.month-list>div>div,
+.year-input>div>div {
     width: 100%;
     padding: 20px;
     border-radius: 10px;
@@ -166,7 +182,8 @@ body {
     cursor: pointer;
 }
 
-.month-list>div>div:hover {
+.month-list>div>div:hover,
+.year-input>div>div:hover {
     background-color: #f2f2f2;
 }
 
@@ -240,4 +257,39 @@ input:checked+.slider:before {
     position: absolute;
     right: 70px;
     top: 8px;
+}
+
+.goto {
+    display: flex;
+    justify-content: space-between;
+    margin: 0 auto;
+    margin-left: 12px;
+
+}
+
+.date-input {
+    border-radius: 20px;
+    width: 80%;
+    padding: 12px 20px;
+    margin: 8px 0;
+    box-sizing: border-box;
+    font-size: 1.3rem;
+    border: 1px solid hsl(24.98, 87.45%, 46.86%);
+    outline: none;
+}
+
+.goto-btn {
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    margin: 12px 0;
+    color: hsl(24.98, 87.45%, 46.86%);
+    border: 1px solid hsl(24.98, 87.45%, 46.86%);
+    background-color: #fff;
+
+    &:hover {
+        border: 1px solid hsl(24.98, 87.45%, 46.86%);
+        color: #fff;
+        background-color: hsl(24.98, 87.45%, 46.86%);
+    }
 }
