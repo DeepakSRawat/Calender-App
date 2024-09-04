@@ -4,12 +4,23 @@ const yearPicker = document.querySelector(".year-picker");
 const daysTag = document.querySelector(".days");
 const weeksTag = document.querySelector(".weeks");
 const todayBtn = document.querySelector("#today");
-let lang = document.querySelector(".lang")
-let prevBtn = document.querySelector("#prev");
-let nextBtn = document.querySelector("#next");
-let calendar = document.querySelector(".wrapper");
-let month_picker = document.querySelector("#month-picker")
-let year_picker = document.querySelector("#year-picker")
+const lang = document.querySelector(".lang")
+const prevBtn = document.querySelector("#prev");
+const nextBtn = document.querySelector("#next");
+const calendar = document.querySelector(".wrapper");
+const month_picker = document.querySelector("#month-picker")
+const year_picker = document.querySelector("#year-picker")
+const addEvent = document.querySelector('.add-event')
+const eventContainer = document.querySelector(".event-container")
+const backDrop = document.querySelector('#modalBackDrop')
+const eventTitleInput = document.querySelector('#eventTitleInput')
+const newEventModal = document.querySelector('#newEventModal')
+const deleteEventModal = document.querySelector('#deleteEventModal')
+
+
+// 3 sep 2024
+let clicked = null;
+let events = localStorage.getItem('events')?JSON.parse(localStorage.getItem('events')): []
 
 // getting new date, current year and month
 let date = new Date()
@@ -23,7 +34,7 @@ const hindi_weeks =["रवि","सोम","मंगल","बुध","गु�
 let months = [...en_months];
 let weeks = [...en_weeks];
 let language = "हिन्दी";
-// console.log(date, currentYear, currentMonth);
+
 
 const renderCalendar = ()   => {
     let firstDayOfMonth = new Date(currentYear,currentMonth, 1).getDay();
@@ -38,15 +49,15 @@ const renderCalendar = ()   => {
         weeksLiTag += `<li>${weeks[index]}</li>`;
     }
 
+    // Render previous month's days
     for (let index = firstDayOfMonth; index > 0; index--) {
         daysLiTag += `<li class="inactive">${lastDateOfLastMonth - index + 1}</li>`;
         
     }
 
-    // console.log(lastDateOfMonth);
+    // Render current month's days
     for (let index = 1; index <= lastDateOfMonth; index++) {
-        let isToday = index === date.getDate() && currentMonth === new Date().getMonth() && currentYear === new Date().getFullYear()? "active":"";
-        // console.log(index);
+        let isToday = index === date.getDate() && currentMonth === new Date().getMonth() && currentYear === new Date().getFullYear()? "active":"none";
         daysLiTag += `<li class="${isToday}">${index}</li>`;
         
     }
@@ -68,7 +79,10 @@ const renderCalendar = ()   => {
     for (let index = lastDayOfMonth; index < filler; index++) {
         daysLiTag += `<li class="inactive">${index - lastDayOfMonth + 1}</li>`;
     }
+    
 
+    // Update the calendar days
+    document.querySelector('.days').innerHTML = daysLiTag;
 
     monthPicker.innerText = `${months[currentMonth]}`;
     yearPicker.innerText = `${currentYear}`;
@@ -79,10 +93,27 @@ const renderCalendar = ()   => {
     hideTodayBtn();
     monthPickerList();
     YearPickerList();
+    eventCreater();
     
 }
 
-renderCalendar();
+function addEventsMarkers() {
+    // adding event marks
+    document.querySelectorAll('.days li').forEach(function(list){
+        // Check if the list item has either 'active' or 'none' class
+        if(list.classList.contains('active') || list.classList.contains('none')){
+            const dayString = `${currentMonth + 1}/${list.innerText}/${currentYear}`
+            
+            const eventForDay = events.find(e => e.date === dayString);
+            
+            if(eventForDay){
+                const eventDiv = document.createElement('div');
+                eventDiv.classList.add('event');
+                list.appendChild(eventDiv);
+            }
+        } 
+    })
+}
 
 
 prevBtn.addEventListener('click', () => {
@@ -95,7 +126,7 @@ prevBtn.addEventListener('click', () => {
     else{
         date = new Date();
     }
-    renderCalendar();
+    load();
 })
 nextBtn.addEventListener('click', () => {
     currentMonth = currentMonth + 1;
@@ -107,14 +138,14 @@ nextBtn.addEventListener('click', () => {
     else{
         date = new Date();
     }
-    renderCalendar();
+    load();
 })
 
 todayBtn.addEventListener("click", () => {
     let date = new Date();
     currentMonth = date.getMonth();
     currentYear = date.getFullYear();
-    renderCalendar();
+    load();
   });
 
 
@@ -152,7 +183,7 @@ function monthPickerList() {
                 currentMonth = index;
 
                 // Render the calendar for the selected month
-                renderCalendar();
+                load();
             };
 
             // Append the month item to the month list
@@ -163,46 +194,46 @@ function monthPickerList() {
 
 // function to render the calendar by year
 function YearPickerList(){
-    year_picker.onclick = () =>{
-    let yearInput = document.querySelector('.year-input');
-    yearInput.innerHTML = '';
-    yearInput.classList.add('show');
-    let year_item = document.createElement('div');
-    year_item.innerHTML = `<div class="goto">
-              <input type="number" maxlength = "4" placeholder="yyyy" class="date-input" />
-              <button class="goto-btn">Go</button>
-            </div>`;
-    yearInput.appendChild(year_item);
-    let dateInput = document.querySelector(".date-input");
-    let gotoBtn = document.querySelector(".goto-btn");
-    let renderYear
-    let isValid
-    // Regular expression to check if the input is a four-digit number
-    dateInput.addEventListener("input",(e) => {
+    yearPicker.addEventListener("click",(e)=>{
+        const gotoBtn = document.querySelector(".goto-btn");
+        const backBtn = document.querySelector(".back-btn");
+        const dateInput = document.querySelector(".date-input");
+        
+        yearInput.style.display="block";
+        backDrop.style.display="block";
+        dateInput.classList.remove('error')
+        dateInput.value = '';
 
+        let renderYear
+        let isValid
+
+        // Regular expression to check if the input is a four-digit number
+        dateInput.addEventListener("input",(e) => {
             renderYear = dateInput.value;
             isValid = /^[0-9]{4}$/.test(renderYear);
+        })
+
+        backBtn.addEventListener("click", function(){
+            yearInput.style.display="none";
+            backDrop.style.display="none";
+        })
+
+        gotoBtn.addEventListener("click",gotoDate);
+
+        function gotoDate(){
+            if(renderYear === undefined || !isValid){
+                dateInput.classList.add('error')
+                backDrop.style.display =  'block';
+            }else{
+                yearInput.style.display="none";
+                backDrop.style.display="none";
+                currentYear = renderYear;
+                load();
+            }
+
+        }
+
     })
-
-    gotoBtn.addEventListener("click",gotoDate);
-    
-    function gotoDate(){
-        console.log(renderYear)
-        if(renderYear == undefined){
-            alert("Invalid Year")}
-        else if(!isValid){
-            alert("Invalid Year")
-            preventDefault();
-        }
-        else{
-            yearInput.classList.remove('show')
-            currentYear = renderYear;
-            renderCalendar();
-        }
-        return;
-
-    }
-}
 }
 
 
@@ -216,13 +247,92 @@ document.addEventListener('DOMContentLoaded', function () {
           weeks = [...hindi_weeks]
           lang.innerHTML = '';
           language = "eng"
-          renderCalendar();
+          load();
         } else {
             months = [...en_months]
             weeks = [...en_weeks]
             lang.innerHTML = '';
             language = "हिन्दी";
-        renderCalendar();
+            load();
       }
     });
   })
+
+
+// Event Modal
+function closeModal(){
+    eventTitleInput.classList.remove('error');
+    newEventModal.style.display = 'none';
+    deleteEventModal.style.display = 'none';
+    backDrop.style.display = 'none';
+    eventTitleInput.value = '';
+    clicked = null;
+    load()
+}
+
+function saveEvent(){
+    if(eventTitleInput.value){
+        eventTitleInput.classList.remove('error');
+        
+        events.push({
+            date: clicked,
+            title: eventTitleInput.value
+        });
+
+        localStorage.setItem('events', JSON.stringify(events));
+        closeModal();
+    }else{
+        eventTitleInput.classList.add('error');
+    }
+}
+
+function openModal(date){
+    clicked = date;
+    const eventForDay = events.find(e => e.date === clicked);
+    if(eventForDay){
+        document.getElementById('eventText').innerText = eventForDay.title;
+        deleteEventModal.style.display = 'block';
+    }else{
+        newEventModal.style.display = 'block';
+    }
+
+    backDrop.style.display = 'block';
+    initButton();
+}
+
+
+function eventCreater(){
+    let lists = document.querySelectorAll('li')
+    
+    lists.forEach(function(list){
+        list.addEventListener('click', function(){
+            const dayString = `${currentMonth + 1}/${list.innerText}/${currentYear}`
+
+            const eventForDay = events.find(e => e.date === dayString);
+
+            if(list.className ==='active' || list.className === 'none'){openModal(dayString)}
+        })
+    })
+}
+
+
+function deleteEvent(){
+    events = events.filter(e => e.date !== clicked);
+    localStorage.setItem('events', JSON.stringify(events));
+    closeModal();
+}
+
+function initButton(){
+    document.getElementById('saveButton').addEventListener('click',saveEvent)
+    document.getElementById('cancelButton').addEventListener('click', closeModal);
+    document.getElementById('deleteButton').addEventListener('click',deleteEvent)
+    document.getElementById('closeButton').addEventListener('click', closeModal);
+}
+
+
+function load(){
+    renderCalendar();
+    addEventsMarkers();
+}
+
+load()
